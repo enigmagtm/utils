@@ -9,9 +9,8 @@ function getDirectories(dir) {
   });
 }
 
-let [, , absoluteDir] = process.argv;
+let [, , absoluteDir = __dirname] = process.argv;
 const dirs = getDirectories(absoluteDir);
-absoluteDir = absoluteDir ?? __dirname;
 dirs.forEach((dir) => {
   const actualDir = path.join(absoluteDir, dir);
   process.chdir(actualDir);
