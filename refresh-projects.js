@@ -3,13 +3,17 @@ const child_process = require('child_process');
 const path = require('path');
 
 function getDirectories(dir) {
-  return fs.readdirSync(dir).filter((file) => fs.statSync(dir + path.sep + file).isDirectory());
+  return fs.readdirSync(dir).filter((file) => {
+    const dirPath = fs.statSync(path.join(dir, file));
+    return dirPath.isDirectory() && (file !== '.git');
+  });
 }
 
-const dirs = getDirectories(__dirname);
-
+let [, , absoluteDir] = process.argv;
+const dirs = getDirectories(absoluteDir);
+absoluteDir = absoluteDir ?? __dirname;
 dirs.forEach((dir) => {
-  const actualDir = path.join(__dirname, dir);
+  const actualDir = path.join(absoluteDir, dir);
   process.chdir(actualDir);
   child_process.exec(`git pull`, { encoding: 'utf-8' },
     (error, stdout, stderr) => {
